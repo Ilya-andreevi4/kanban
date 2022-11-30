@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Flex from "./components/Flex";
 import Header from "./components/header/Header";
 import MainBoard from "./components/main-board/MainBoard";
 import SideBar from "./components/sidebar/SideBar";
@@ -11,8 +12,8 @@ const AppWrapper = styled.div`
   text-align: center;
   display: grid;
   flex-direction: column;
-  grid-template-columns: repeat(25, 1fr);
-  grid-auto-rows: repeat(12, 1fr);
+  grid-template-columns: repeat(24, 1fr);
+  grid-auto-rows: repeat(11, 1fr);
 `;
 
 function App() {

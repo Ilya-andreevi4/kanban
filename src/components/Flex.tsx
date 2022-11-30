@@ -9,6 +9,10 @@ interface FlexProps {
   margin?: string;
   padding?: string;
   children: any;
+  gridColStart: number;
+  gridColEnd: number;
+  gridRowStart: number;
+  gridRowEnd: number;
 }
 const StyledFlex = styled.div<FlexProps>`
   display: flex;
@@ -16,9 +20,13 @@ const StyledFlex = styled.div<FlexProps>`
   align-items: ${(props) => props.align || "stretch"};
   justify-content: ${(props) => props.justify || "stretch"};
   margin: ${(props) => props.margin || "0px"};
+  grid-column-start: ${(props) => props.gridColStart};
+  grid-column-end: ${(props) => props.gridColEnd};
+  grid-row-start: ${(props) => props.gridRowStart};
+  grid-row-end: ${(props) => props.gridRowEnd};
 `;
 const Flex: FC<FlexProps> = (props) => {
-  return <StyledFlex {...props} />;
+  return <StyledFlex {...props}>{props.children}</StyledFlex>;
 };
 
 export default Flex;
