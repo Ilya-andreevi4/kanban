@@ -19,6 +19,7 @@ const SideBarWrapper = styled.div`
 const Logo = styled.img`
   align-self: flex-start;
   width: 130px;
+  cursor: pointer;
 `;
 const SideBar: FC<SideBarProps> = () => {
   return (

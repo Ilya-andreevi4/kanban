@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import Flex from "./components/Flex";
 import Header from "./components/header/Header";
 import MainBoard from "./components/main-board/MainBoard";
 import SideBar from "./components/sidebar/SideBar";
@@ -19,10 +18,15 @@ const AppWrapper = styled.div`
 function App() {
   return (
     <AppWrapper>
+      {/* Done */}
       <SideBar />
+      {/* Done */}
+
+      {/* ToDo */}
       <ToolsColumn />
       <Header />
       <MainBoard />
+      {/* ToDo */}
     </AppWrapper>
   );
 }

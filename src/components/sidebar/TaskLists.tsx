@@ -23,12 +23,14 @@ const TaskTitle = styled.div`
   color: white;
   font-size: 14px;
   line-height: 16px;
+  cursor: pointer;
 `;
-const TaskList = styled.li`
+const Task = styled.li`
   color: #8c939f;
   font-size: 14px;
   line-height: 16px;
   margin-top: 16px;
+  cursor: pointer;
 `;
 
 const TaskLists: FC<TaskListsProps> = () => {
@@ -49,15 +51,15 @@ const TaskLists: FC<TaskListsProps> = () => {
     <TaskListsWrapper>
       <TasksUl>
         {tasks &&
-          tasks.map((tl) => (
-            <TaskSection>
+          tasks.map((tl, idx) => (
+            <TaskSection key={idx}>
               <TaskTitle>
                 <img src={arrow} alt="" />
                 {tl.title}
               </TaskTitle>
               <TasksUl>
-                {tl.tasks.map((t) => (
-                  <TaskList>{t}</TaskList>
+                {tl.tasks.map((t, idx) => (
+                  <Task key={idx}>{t}</Task>
                 ))}
               </TasksUl>
             </TaskSection>
