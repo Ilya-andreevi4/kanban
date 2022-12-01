@@ -1,13 +1,13 @@
-import React, { FC } from "react";
+import React from "react";
 import styled from "styled-components";
 
-interface MainBoardProps {}
 const MainBoardWrapper = styled.div`
   position: relative;
   grid-column: 6/25;
-  grid-row: 2/12;
+  grid-row: 2/13;
+  background: bisque;
 `;
-const MainBoard: FC<MainBoardProps> = () => {
+const MainBoard = () => {
   return <MainBoardWrapper></MainBoardWrapper>;
 };
 

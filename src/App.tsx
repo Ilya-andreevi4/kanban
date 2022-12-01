@@ -12,7 +12,7 @@ const AppWrapper = styled.div`
   display: grid;
   flex-direction: column;
   grid-template-columns: repeat(24, 1fr);
-  grid-auto-rows: repeat(11, 1fr);
+  grid-template-rows: repeat(12, 1fr);
 `;
 
 function App() {
@@ -20,10 +20,10 @@ function App() {
     <AppWrapper>
       {/* Done */}
       <SideBar />
+      <ToolsColumn />
       {/* Done */}
 
       {/* ToDo */}
-      <ToolsColumn />
       <Header />
       <MainBoard />
       {/* ToDo */}

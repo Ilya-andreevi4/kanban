@@ -1,5 +1,5 @@
+import { createGlobalStyle } from "styled-components";
 import ReactDOM from "react-dom/client";
-import styled, { createGlobalStyle } from "styled-components";
 import React from "react";
 import App from "./App";
 

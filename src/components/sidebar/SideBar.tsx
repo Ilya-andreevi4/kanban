@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import logo from "../../assets/bordio-logo.svg";
-import SearchContainer from "./SearchContainer";
+import SearchContainer from "../SearchContainer";
 import TaskLists from "./TaskLists";
 import WorkSpace from "./WorkSpace";
 
@@ -13,7 +13,7 @@ const SideBarWrapper = styled.div`
   flex-direction: column;
   color: white;
   grid-column: 1/4;
-  grid-row: 1/12;
+  grid-row: 1/13;
   padding: 26px 16px;
 `;
 const Logo = styled.img`
@@ -25,7 +25,7 @@ const SideBar: FC<SideBarProps> = () => {
   return (
     <SideBarWrapper>
       <Logo src={logo} alt="Bordio Logo" />
-      <SearchContainer />
+      <SearchContainer place="sidebar" />
       <WorkSpace />
       <TaskLists />
     </SideBarWrapper>

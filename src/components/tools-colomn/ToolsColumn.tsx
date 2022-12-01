@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import styled, { css } from "styled-components";
 import { ITool } from "../../models/ITool";
 import iconRoadmap from "../../assets/tools-icon/icon_1.svg";
@@ -12,7 +12,6 @@ import iconTasksActive from "../../assets/tools-icon/icon_3_active.svg";
 import iconNotesActive from "../../assets/tools-icon/icon_4_active.svg";
 import iconFilesActive from "../../assets/tools-icon/icon_5_active.svg";
 
-interface ToolsColumnProps {}
 interface ToolSectionProps {
   isActive: boolean;
 }
@@ -20,7 +19,7 @@ const ToolsColumnWrapper = styled.div`
   position: relative;
   background: #f5f8fa;
   grid-column: 4/6;
-  grid-row: 1/12;
+  grid-row: 1/13;
   padding: 24px 16px 24px 0px;
   display: flex;
   flex-direction: column;
@@ -48,6 +47,7 @@ const ToolSection = styled.li<ToolSectionProps>`
   height: 50px;
   padding-left: 10px;
   cursor: pointer;
+  transition: color 0.5s ease-out, background 0.5s ease-out;
   ${(props) =>
     props.isActive &&
     css`
@@ -65,39 +65,39 @@ const ToolSection = styled.li<ToolSectionProps>`
       }
     `}
 `;
-const ToolsColumn: FC<ToolsColumnProps> = () => {
+const ToolsColumn = () => {
   const [tools, setTools] = useState<ITool[]>([
     {
-      title: "Roadmap",
       id: 0,
+      title: "Roadmap",
       icon: iconRoadmap,
       iconActive: iconRoadmapActive,
       isActive: false,
     },
     {
-      title: "Scheldule",
       id: 1,
+      title: "Scheldule",
       icon: iconScheldule,
       iconActive: iconSchelduleActive,
       isActive: true,
     },
     {
-      title: "Tasks",
       id: 2,
+      title: "Tasks",
       icon: iconTasks,
       iconActive: iconTasksActive,
       isActive: false,
     },
     {
-      title: "Notes",
       id: 3,
+      title: "Notes",
       icon: iconNotes,
       iconActive: iconNotesActive,
       isActive: false,
     },
     {
-      title: "Files",
       id: 4,
+      title: "Files",
       icon: iconFiles,
       iconActive: iconFilesActive,
       isActive: false,
