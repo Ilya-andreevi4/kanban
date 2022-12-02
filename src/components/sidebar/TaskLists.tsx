@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 interface TaskListsProps {}
 const TaskListsWrapper = styled.div`
-  padding: 16px;
+  padding-top: 13px;
   color: white;
 `;
 const TasksUl = styled.ul`
@@ -21,8 +21,6 @@ const TaskTitle = styled.div`
   justify-content: flex-start;
   gap: 8px;
   color: white;
-  font-size: 14px;
-  line-height: 16px;
   cursor: pointer;
 `;
 const Task = styled.li`

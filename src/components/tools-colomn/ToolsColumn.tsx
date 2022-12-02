@@ -21,6 +21,9 @@ const ToolsColumnWrapper = styled.div`
   grid-column: 4/6;
   grid-row: 1/13;
   padding: 24px 16px 24px 0px;
+  @media (max-width: 1515px) {
+    padding-right: 0px;
+  }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -62,6 +65,9 @@ const ToolSection = styled.li<ToolSectionProps>`
         width: 4px;
         border-radius: 0px 10px 10px 0px;
         background: #0094ff;
+      }
+      @media (max-width: 1515px) {
+        border-radius: 0px;
       }
     `}
 `;

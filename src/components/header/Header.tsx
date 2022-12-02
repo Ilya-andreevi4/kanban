@@ -66,6 +66,8 @@ const NotificationIcon = styled.div`
     box-sizing: border-box;
     background-color: #f21247;
     color: #ffffff;
+
+    font-weight: 400;
     font-size: 10px;
     line-height: 10px;
     border: 1px solid #ffffff;
