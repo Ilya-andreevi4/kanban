@@ -1,9 +1,11 @@
-import { ITaskList } from "../../models/ITaskList";
 import arrow from "../../assets/arrow.svg";
-import React, { FC, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
-interface TaskListsProps {}
+interface ITaskList {
+  title: string;
+  tasks: string[];
+}
 const TaskListsWrapper = styled.div`
   padding-top: 13px;
   color: white;
@@ -24,14 +26,14 @@ const TaskTitle = styled.div`
   cursor: pointer;
 `;
 const Task = styled.li`
-  color: #8c939f;
+  color: ${({ theme }) => theme.textSecondary};
   font-size: 14px;
   line-height: 16px;
   margin-top: 16px;
   cursor: pointer;
 `;
 
-const TaskLists: FC<TaskListsProps> = () => {
+const TaskLists = () => {
   const [tasks, setTasks] = useState<ITaskList[]>([
     { title: "Favorites", tasks: ["Marketing", "Mobile App"] },
     {

@@ -44,7 +44,7 @@ const ToolSection = styled.li<ToolSectionProps>`
   display: flex;
   position: relative;
   align-items: center;
-  color: ${(props) => props.isActive && "#0094ff"};
+  color: ${(props) => props.isActive && props.theme.accent};
   gap: 10px;
   width: 100%;
   height: 50px;
@@ -64,7 +64,7 @@ const ToolSection = styled.li<ToolSectionProps>`
         height: 50px;
         width: 4px;
         border-radius: 0px 10px 10px 0px;
-        background: #0094ff;
+        background: props.theme.accent;
       }
       @media (max-width: 1515px) {
         border-radius: 0px;

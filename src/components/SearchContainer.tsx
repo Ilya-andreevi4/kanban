@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import styled, { css } from "styled-components";
 import searchImg from "../assets/search.svg";
 
@@ -45,6 +45,7 @@ const Search = styled.input.attrs({ type: "text" })<SearchProps>`
 const SearchIcon = styled.img`
   width: 12px;
   height: 12px;
+  cursor: pointer;
 `;
 
 const SearchContainer: FC<SearchProps> = ({ place }) => {

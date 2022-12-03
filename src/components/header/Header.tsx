@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import plus from "../../assets/header-icons/plus.svg";
 import arrow from "../../assets/header-icons/arrow.svg";
@@ -42,8 +41,10 @@ const ButtonMenu = styled.div<ButtonMenuProps>`
     isAddButton ? "8px 20px" : "8px 14px 8px 20px"};
   border-radius: 50px;
   gap: ${({ isAddButton }) => (isAddButton ? "0px" : "8px")};
-  background: ${({ isAddButton }) => (isAddButton ? "#0094FF" : "#F5F8FA")};
+  background: ${(props) =>
+    props.isAddButton ? props.theme.accent : "#F5F8FA"};
   color: ${({ isAddButton }) => isAddButton && "#fff"};
+  cursor: pointer;
 `;
 
 const NotificationIcon = styled.div`
@@ -53,6 +54,7 @@ const NotificationIcon = styled.div`
   justify-content: center;
   width: 32px;
   height: 32px;
+  cursor: pointer;
 
   &::before {
     position: absolute;
@@ -75,7 +77,9 @@ const NotificationIcon = styled.div`
     content: "99+";
   }
 `;
-const UserAvatar = styled.img``;
+const UserAvatar = styled.img`
+  cursor: pointer;
+`;
 
 const Header = () => {
   return (

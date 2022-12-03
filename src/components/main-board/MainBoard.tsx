@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import plus from "../../assets/plus.svg";
-import ITaskColumn from "../../models/ITaskColumn";
-import Column from "./Column";
-import taskColumnsData from "./taskColumnData";
+import ITaskColumn, { ITask } from "../../models/ITaskColumn";
+import TaskColumn from "./TaskColumn";
+import taskColumnsData, { tasks } from "./tasks-data";
 
 const MainBoardWrapper = styled.div`
   position: relative;
@@ -43,7 +43,7 @@ const CreateColumnWrapper = styled.div`
 
 const CreateColumnTitle = styled.div`
   display: flex;
-  color: #8c939f;
+  color: ${({ theme }) => theme.textSecondary};
   grid-row: 1/1;
   padding-top: 25px;
   padding-left: 36px;
@@ -51,7 +51,6 @@ const CreateColumnTitle = styled.div`
   text-align: left;
   align-items: flex-start;
   width: 100%;
-  /* border: 1px solid #f3f3f3; */
   border-top: none;
   border-right: none;
 `;
@@ -67,10 +66,36 @@ const MainBoard = () => {
   const [taskColumns, setTaskColumns] =
     useState<ITaskColumn[]>(taskColumnsData);
 
+  //TODO!
+  const [todos, setTodos] = useState<ITask[]>(tasks);
+
+  const moveTodoHandler = (dragIndex: number, hoverIndex: number) => {
+    const dragTodo = todos[dragIndex];
+
+    if (dragTodo) {
+      setTodos((prevState) => {
+        const coppiedStateArray = [...prevState];
+        // remove item by "hoverIndex" and put "dragItem" instead
+        const prevTodo = coppiedStateArray.splice(hoverIndex, 1, dragTodo);
+
+        // remove item by "dragIndex" and put "prevItem" instead
+        coppiedStateArray.splice(dragIndex, 1, prevTodo[0]);
+
+        return coppiedStateArray;
+      });
+    }
+  };
+  //TODO!
+
   return (
     <MainBoardWrapper>
       {taskColumns.map((taskCol) => (
-        <Column taskCol={taskCol} />
+        <TaskColumn
+          taskCol={taskCol}
+          moveHandler={moveTodoHandler}
+          todos={todos}
+          setTodos={setTodos}
+        />
       ))}
       <CreateColumnWrapper>
         <CreateColumnTitle>

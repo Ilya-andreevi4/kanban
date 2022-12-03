@@ -3,10 +3,10 @@ export interface ITask {
   description: string;
   color: string;
   taskTime: any;
-  isComplieted: boolean;
+  column: string;
 }
+
 export default interface ITaskColumn {
   id: number;
   title: string;
-  tasks: ITask[];
 }

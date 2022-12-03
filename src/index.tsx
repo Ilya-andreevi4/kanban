@@ -1,7 +1,9 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, ThemeProvider } from "styled-components";
 import ReactDOM from "react-dom/client";
 import React from "react";
 import App from "./App";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const GlobalStyle = createGlobalStyle`
 *{
@@ -16,12 +18,18 @@ const GlobalStyle = createGlobalStyle`
   color: #222222;
 }
 `;
+const theme = {
+  textSecondary: "#8C939F",
+  accent: "#0094FF",
+};
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <>
+  <ThemeProvider theme={theme}>
     <GlobalStyle />
-    <App />
-  </>
+    <DndProvider backend={HTML5Backend}>
+      <App />
+    </DndProvider>
+  </ThemeProvider>
 );
