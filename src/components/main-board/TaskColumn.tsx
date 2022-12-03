@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useDrop } from "react-dnd";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import { TaskTypes } from "../../models/TaskTypes";
 import Task from "./Task";

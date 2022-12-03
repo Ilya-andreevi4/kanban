@@ -18,15 +18,10 @@ const AppWrapper = styled.div`
 function App() {
   return (
     <AppWrapper>
-      {/* Done */}
       <SideBar />
       <ToolsColumn />
-      {/* Done */}
-
-      {/* ToDo */}
       <Header />
       <MainBoard />
-      {/* ToDo */}
     </AppWrapper>
   );
 }

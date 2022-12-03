@@ -4,6 +4,7 @@ import { ITask } from "../../models/ITaskColumn";
 import { useDrag, useDrop } from "react-dnd";
 import { TaskTypes } from "../../models/TaskTypes";
 import { COLUMN_NAMES } from "./tasks-data";
+import type { Identifier, XYCoord } from "dnd-core";
 
 interface StyledTaskProps {
   color: string;
@@ -14,6 +15,11 @@ interface DropResult {
   allowedDropEffect: string;
   dropEffect: string;
   title: string;
+}
+interface DragTodo {
+  index: number;
+  id: number;
+  type: string;
 }
 
 interface TaskProps {
@@ -72,88 +78,101 @@ const Task: FC<TaskProps> = ({
     });
   };
 
-  const ref: React.MutableRefObject<any> = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  const [, drop] = useDrop({
+  const [{ handlerId }, drop] = useDrop<
+    DragTodo,
+    void,
+    { handlerId: Identifier | null }
+  >({
     accept: TaskTypes.CARD,
-    hover(todo: ITask, monitor) {
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      };
+    },
+    hover(todo: DragTodo, monitor) {
       if (!ref.current) {
         return;
       }
       const dragIndex = todo.id;
       const hoverIndex = index;
+
+      // Don't replace items with themselves
       if (dragIndex === hoverIndex) {
         return;
       }
-      // Determine rectangle on screen
-      const hoverBoundingRect =
-        ref.current && ref.current.getBoundingClientRect();
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+
       // Get vertical middle
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
+
       // Get pixels to the top
-      const hoverClientY = clientOffset?.y
-        ? clientOffset.y - hoverBoundingRect.top
-        : "";
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
+
       // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
+
       // Dragging upwards
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
 
       moveHandler(dragIndex, hoverIndex);
-      todo.id = hoverIndex;
+      todo.index = hoverIndex;
     },
   });
 
-  const [{ isDragging }, dragRef] = useDrag(
-    () => ({
-      type: TaskTypes.CARD,
-      item: { ...task, currentColumnName },
-      end: (item, monitor) => {
-        const dropResult = monitor.getDropResult() as DropResult;
-        if (dropResult) {
-          const { title } = dropResult;
-          const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
-          switch (title) {
-            case NEW_TASK:
-              changeTodoColumn(item, NEW_TASK);
-              break;
-            case SCHEDULED:
-              changeTodoColumn(item, SCHEDULED);
-              break;
-            case IN_PROGRESS:
-              changeTodoColumn(item, IN_PROGRESS);
-              break;
-            case COMPLIETED:
-              changeTodoColumn(item, COMPLIETED);
-              break;
-            default:
-              break;
-          }
+  const [{ isDragging }, dragRef] = useDrag({
+    type: TaskTypes.CARD,
+    item: () => {
+      return { ...task, currentColumnName, index };
+    },
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult() as DropResult;
+      if (dropResult) {
+        const { title } = dropResult;
+        const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
+        switch (title) {
+          case NEW_TASK:
+            changeTodoColumn(item, NEW_TASK);
+            break;
+          case SCHEDULED:
+            changeTodoColumn(item, SCHEDULED);
+            break;
+          case IN_PROGRESS:
+            changeTodoColumn(item, IN_PROGRESS);
+            break;
+          case COMPLIETED:
+            changeTodoColumn(item, COMPLIETED);
+            break;
+          default:
+            break;
         }
-      },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
+      }
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
     }),
-    []
-  );
+  });
   dragRef(drop(ref));
   return (
     <StyledTask
       ref={ref}
       style={{
         background: isDragging
-          ? "red"
+          ? "green"
           : task.column === COLUMN_NAMES.COMPLIETED
           ? //   : task.isComplieted
             "#F0F0F0"

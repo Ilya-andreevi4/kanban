@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import styled from "styled-components";
 import plus from "../../assets/plus.svg";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
@@ -66,7 +66,6 @@ const MainBoard = () => {
   const [taskColumns, setTaskColumns] =
     useState<ITaskColumn[]>(taskColumnsData);
 
-  //TODO!
   const [todos, setTodos] = useState<ITask[]>(tasks);
 
   const moveTodoHandler = (dragIndex: number, hoverIndex: number) => {
@@ -85,7 +84,6 @@ const MainBoard = () => {
       });
     }
   };
-  //TODO!
 
   return (
     <MainBoardWrapper>
