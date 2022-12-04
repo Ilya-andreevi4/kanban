@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useDrop } from "react-dnd";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import { TaskTypes } from "../../models/TaskTypes";
 import Task from "./Task";
@@ -8,8 +8,9 @@ import Task from "./Task";
 interface ColumnProps {
   taskCol: ITaskColumn;
   todos: ITask[];
-  moveHandler: (dragIndex: number, hoverIndex: number) => void;
+  moveHandler: (dragIndex: string, hoverIndex: string) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
+  colKey: number;
 }
 
 const ColumnWrapper = styled.div`
@@ -17,6 +18,7 @@ const ColumnWrapper = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: repeat(16, 1fr);
   width: 19%;
+  /* max-height: 100%; */
   flex-direction: column;
 `;
 const TasksColumnWrapper = styled.div`
@@ -58,6 +60,7 @@ const TaskColumn: FC<ColumnProps> = ({
   moveHandler,
   todos,
   setTodos,
+  colKey,
 }) => {
   const [{ isOver }, drop] = useDrop({
     accept: TaskTypes.CARD,
@@ -69,23 +72,34 @@ const TaskColumn: FC<ColumnProps> = ({
 
   const getBackgroundColor = () => {
     if (isOver) {
-      return "rgb(188,251,255)";
+      return "#e8ebef";
     } else {
       return "";
     }
   };
 
-  const returnTodosForColumn = (columnName: string) => {
+  const returnTodosForColumn = (columnName: string, colKey: number) => {
     return todos
       .filter((todo) => todo.column === columnName)
-      .map((item) => (
+      .sort((a, b) => {
+        const aId = a.id.split("/");
+        const bId = b.id.split("/");
+        if (parseInt(aId[1]) < parseInt(bId[1])) {
+          return -1;
+        }
+        if (parseInt(aId[1]) > parseInt(bId[1])) {
+          return 1;
+        }
+        return 0;
+      })
+      .map((todo, index) => (
         <Task
-          key={item.id}
-          task={item}
+          key={todo.id}
+          task={todo}
           moveHandler={moveHandler}
-          currentColumnName={item.column}
+          currentColumnName={todo.column}
           setTodos={setTodos}
-          index={item.id}
+          index={colKey + "/" + index}
         />
       ));
   };
@@ -102,7 +116,7 @@ const TaskColumn: FC<ColumnProps> = ({
         ref={drop}
         style={{ backgroundColor: getBackgroundColor() }}
       >
-        {returnTodosForColumn(taskCol.title)}
+        {returnTodosForColumn(taskCol.title, colKey)}
       </TasksColumnWrapper>
     </ColumnWrapper>
   );

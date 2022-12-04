@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+import { updateArrayBindingPattern } from "typescript";
 import plus from "../../assets/plus.svg";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import TaskColumn from "./TaskColumn";
@@ -68,19 +69,21 @@ const MainBoard = () => {
 
   const [todos, setTodos] = useState<ITask[]>(tasks);
 
-  const moveTodoHandler = (dragIndex: number, hoverIndex: number) => {
-    const dragTodo = todos[dragIndex];
+  const moveTodoHandler = (dragIndex: string, hoverIndex: string) => {
+    // const dragNum = dragIndex.split("/");
+    const dragTodo = todos.find((t) => t.id === dragIndex);
+    const hoverIdx = todos.findIndex((t) => t.id === hoverIndex);
+    const dragIdx = todos.findIndex((t) => t.id === dragIndex);
 
     if (dragTodo) {
       setTodos((prevState) => {
-        const coppiedStateArray = [...prevState];
+        const coppiedTodosArray = [...prevState];
         // remove item by "hoverIndex" and put "dragItem" instead
-        const prevTodo = coppiedStateArray.splice(hoverIndex, 1, dragTodo);
-
+        const prevTodo = coppiedTodosArray.splice(hoverIdx, 1, dragTodo);
         // remove item by "dragIndex" and put "prevItem" instead
-        coppiedStateArray.splice(dragIndex, 1, prevTodo[0]);
+        coppiedTodosArray.splice(dragIdx, 1, prevTodo[0]);
 
-        return coppiedStateArray;
+        return coppiedTodosArray;
       });
     }
   };
@@ -89,6 +92,8 @@ const MainBoard = () => {
     <MainBoardWrapper>
       {taskColumns.map((taskCol) => (
         <TaskColumn
+          key={taskCol.id}
+          colKey={taskCol.id}
           taskCol={taskCol}
           moveHandler={moveTodoHandler}
           todos={todos}
