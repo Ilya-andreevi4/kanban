@@ -64,13 +64,7 @@ const TaskTime = styled.div<StyledTaskProps>`
   line-height: 15px;
 `;
 
-const Task: FC<TaskProps> = ({
-  task,
-  moveHandler,
-  setTodos,
-  currentColumnName,
-  index,
-}) => {
+const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
   const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
   const changeTodoColumn = (currentTodoId: number, columnName: string) => {
     setTodos((prevState) => {
@@ -102,7 +96,6 @@ const Task: FC<TaskProps> = ({
       }
       const dragIndex = todo.id;
       const hoverIndex = task.id;
-      console.log(dragIndex, hoverIndex);
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) {
@@ -112,6 +105,8 @@ const Task: FC<TaskProps> = ({
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 
       // Get vertical middle
+      // console.log(hoverBoundingRect.bottom, hoverBoundingRect.top);
+
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       // Determine mouse position
@@ -152,20 +147,16 @@ const Task: FC<TaskProps> = ({
         switch (title) {
           case NEW_TASK:
             changeTodoColumn(item.id, NEW_TASK);
-            // changeId(item.task, NEW_TASK, task.id);
             break;
           case SCHEDULED:
             changeTodoColumn(item.id, SCHEDULED);
-            // changeId(item.task, SCHEDULED, task.id);
 
             break;
           case IN_PROGRESS:
             changeTodoColumn(item.id, IN_PROGRESS);
-            // changeId(item.task, IN_PROGRESS, task.id);
             break;
           case COMPLIETED:
             changeTodoColumn(item.id, COMPLIETED);
-            // changeId(item.task, COMPLIETED, item.index);
             break;
           default:
             break;

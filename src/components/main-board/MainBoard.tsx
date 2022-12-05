@@ -11,7 +11,7 @@ const MainBoardWrapper = styled.div`
   padding: 0px 10px;
   grid-column: 6/25;
   grid-row: 2/13;
-  max-height: 890px;
+  max-height: 955px;
   overflow-y: auto;
   border-bottom: 1px solid #f3f3f3;
   &::before {
@@ -79,11 +79,11 @@ const MainBoard = () => {
     if (dragTodo) {
       const coppiedTodosArray = Array.from(todos);
       const [NewOrder] = coppiedTodosArray.splice(dragIdx, 1);
-      coppiedTodosArray.splice(hoverIdx + 1, 0, NewOrder);
+      coppiedTodosArray.splice(hoverIdx, 0, NewOrder);
       setTodos(coppiedTodosArray);
     }
   };
-  // При захвате остаётся пустой контейнер
+
   return (
     <MainBoardWrapper>
       {taskColumns.map((taskCol) => (
