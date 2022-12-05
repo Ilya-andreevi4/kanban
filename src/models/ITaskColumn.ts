@@ -1,5 +1,6 @@
 export interface ITask {
-  id: string;
+  testId: string;
+  id: number;
   description: string;
   color: string;
   taskTime: any;

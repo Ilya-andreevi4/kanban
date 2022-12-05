@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useDrop } from "react-dnd";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import { TaskTypes } from "../../models/TaskTypes";
 import Task from "./Task";
@@ -8,7 +8,7 @@ import Task from "./Task";
 interface ColumnProps {
   taskCol: ITaskColumn;
   todos: ITask[];
-  moveHandler: (dragIndex: string, hoverIndex: string) => void;
+  moveHandler: (dragIndex: number, hoverIndex: number) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
   colKey: number;
 }
@@ -18,7 +18,6 @@ const ColumnWrapper = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: repeat(16, 1fr);
   width: 19%;
-  /* max-height: 100%; */
   flex-direction: column;
 `;
 const TasksColumnWrapper = styled.div`
@@ -28,6 +27,7 @@ const TasksColumnWrapper = styled.div`
   gap: 10px;
   padding: 39px 10px 0px 10px;
   height: 100%;
+  overflow-y: auto;
   flex-direction: column;
   border-right: ${({ title }) =>
     title !== "Complieted" ? "1px solid #f3f3f3" : "none"};
@@ -82,12 +82,10 @@ const TaskColumn: FC<ColumnProps> = ({
     return todos
       .filter((todo) => todo.column === columnName)
       .sort((a, b) => {
-        const aId = a.id.split("/");
-        const bId = b.id.split("/");
-        if (parseInt(aId[1]) < parseInt(bId[1])) {
+        if (a.id < b.id) {
           return -1;
         }
-        if (parseInt(aId[1]) > parseInt(bId[1])) {
+        if (a.id > b.id) {
           return 1;
         }
         return 0;
@@ -99,7 +97,7 @@ const TaskColumn: FC<ColumnProps> = ({
           moveHandler={moveHandler}
           currentColumnName={todo.column}
           setTodos={setTodos}
-          index={colKey + "/" + index}
+          index={index}
         />
       ));
   };
