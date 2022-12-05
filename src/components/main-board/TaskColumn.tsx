@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useDrop } from "react-dnd";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import { TaskTypes } from "../../models/TaskTypes";
 import Task from "./Task";
@@ -81,15 +81,6 @@ const TaskColumn: FC<ColumnProps> = ({
   const returnTodosForColumn = (columnName: string, colKey: number) => {
     return todos
       .filter((todo) => todo.column === columnName)
-      .sort((a, b) => {
-        if (a.id < b.id) {
-          return -1;
-        }
-        if (a.id > b.id) {
-          return 1;
-        }
-        return 0;
-      })
       .map((todo, index) => (
         <Task
           key={todo.id}

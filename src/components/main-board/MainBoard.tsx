@@ -83,7 +83,7 @@ const MainBoard = () => {
       setTodos(coppiedTodosArray);
     }
   };
-
+  // При захвате остаётся пустой контейнер
   return (
     <MainBoardWrapper>
       {taskColumns.map((taskCol) => (
