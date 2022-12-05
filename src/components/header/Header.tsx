@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import plus from "../../assets/header-icons/plus.svg";
 import arrow from "../../assets/header-icons/arrow.svg";
 import bell from "../../assets/header-icons/bell.svg";
-import avatar from "../../assets/header-icons/avatar.svg";
+import avatar from "../../assets/avatar.png";
 import SearchContainer from "../SearchContainer";
 import { useState, useEffect } from "react";
 import { dropdownsData, IITem } from "./dropdowns-data";
@@ -158,13 +158,14 @@ const Header = () => {
       })
     );
   };
-  //ToDo handleChangeSelect!
+
   const handleChangeSelect = (
     selectId: number,
     dropType: string,
     e: React.MouseEvent<HTMLLIElement, MouseEvent>
   ) => {
     e.preventDefault();
+    // Выбранную яйчейку помещаем в нужный селектор.
     dropdowns.forEach((d) => {
       if (d.title === dropType) {
         d.list.forEach((i) => {
@@ -178,19 +179,8 @@ const Header = () => {
         });
       } else return;
     });
-    // setDropdowns((prev) => {
-    //   const copyArr = prev.map((d) => {
-    //     const newDrops: IITem[] = d.list.map((i) => {
-    //       if (i.title === selectedView || i.title === selectedFilter) {
-    //         return { ...i, isActive: true };
-    //       } else return { ...i, isActive: false };
-    //     });
-    //     return { ...d, list: newDrops };
-    //   });
-    //   return copyArr;
-    // });
-    // console.log(dropdowns);
   };
+  // В селекторы вкладываем активную яйчейку
   useEffect(() => {
     setSelectedView(
       dropdowns.find((d) => d.title === "view")?.list.find((t) => t.isActive)
@@ -201,6 +191,8 @@ const Header = () => {
         ?.title || ""
     );
   }, []);
+
+  // После изменений селекторов активируем необходимые яйчейки, а у остальных выключаем активность
   useEffect(() => {
     setDropdowns((prev) => {
       const copyArr = prev.map((d) => {
