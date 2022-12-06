@@ -10,6 +10,15 @@ export interface IDropdawn {
 }
 export const dropdownsData: IDropdawn[] = [
   {
+    title: "test",
+    isOpen: false,
+    list: [
+      { id: 0, title: "Error 1", isActive: false },
+      { id: 1, title: "Error 2", isActive: false },
+      { id: 2, title: "Error 3", isActive: true },
+    ],
+  },
+  {
     title: "view",
     isOpen: false,
     list: [

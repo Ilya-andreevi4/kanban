@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import { ITool } from "../../models/ITool";
 import iconRoadmap from "../../assets/tools-icon/icon_1.svg";
@@ -71,44 +71,46 @@ const ToolSection = styled.li<ToolSectionProps>`
       }
     `}
 `;
+
 const ToolsColumn = () => {
   const [tools, setTools] = useState<ITool[]>([
     {
       id: 0,
       title: "Roadmap",
-      icon: iconRoadmap,
-      iconActive: iconRoadmapActive,
+      iconUrl: iconRoadmap,
+      iconActiveUrl: iconRoadmapActive,
       isActive: false,
     },
     {
       id: 1,
       title: "Scheldule",
-      icon: iconScheldule,
-      iconActive: iconSchelduleActive,
+      iconUrl: iconScheldule,
+      iconActiveUrl: iconSchelduleActive,
       isActive: true,
     },
     {
       id: 2,
       title: "Tasks",
-      icon: iconTasks,
-      iconActive: iconTasksActive,
+      iconUrl: iconTasks,
+      iconActiveUrl: iconTasksActive,
       isActive: false,
     },
     {
       id: 3,
       title: "Notes",
-      icon: iconNotes,
-      iconActive: iconNotesActive,
+      iconUrl: iconNotes,
+      iconActiveUrl: iconNotesActive,
       isActive: false,
     },
     {
       id: 4,
       title: "Files",
-      icon: iconFiles,
-      iconActive: iconFilesActive,
+      iconUrl: iconFiles,
+      iconActiveUrl: iconFilesActive,
       isActive: false,
     },
   ]);
+
   const handleClick = (tool: ITool) => {
     if (tool.isActive) {
       return;
@@ -121,6 +123,7 @@ const ToolsColumn = () => {
       return setTools(newTools);
     }
   };
+
   return (
     <ToolsColumnWrapper>
       <ToolsTitle>Tools</ToolsTitle>
@@ -131,7 +134,7 @@ const ToolsColumn = () => {
             isActive={t.isActive}
             onClick={() => handleClick(t)}
           >
-            <ToolIcon src={t.isActive ? t.iconActive : t.icon} alt="" />
+            <ToolIcon src={t.isActive ? t.iconActiveUrl : t.iconUrl} alt="" />
             {t.title}
           </ToolSection>
         ))}
