@@ -150,7 +150,7 @@ const Task: FC<TaskProps> = ({
       if (dropResult) {
         const { title } = dropResult;
         const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
-        if (!isOver) {
+        if (!isOver && todo.prevColumn !== title) {
           dropHandler(todo.id, title);
         } else
           switch (title) {
