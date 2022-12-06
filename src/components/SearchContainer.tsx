@@ -19,7 +19,7 @@ const SearchWrapper = styled.div<SearchProps>`
       : place === "header" && "12px 14px 12px 16px"};
   width: 100%;
   height: ${({ place }) =>
-    place === "sidebar" ? "32px" : place === "header" && "100%"};
+    place === "sidebar" ? "32px" : place === "header" && "40px"};
   background: ${({ place }) =>
     place === "sidebar" ? "#2d4071" : place === "header" && "#F5F8FA"};
   border-radius: ${({ place }) =>
@@ -27,7 +27,7 @@ const SearchWrapper = styled.div<SearchProps>`
   ${({ place }) =>
     place === "header" &&
     css`
-      max-width: 180px;
+      min-width: 180px;
     `};
 `;
 
