@@ -10,7 +10,10 @@ interface ColumnProps {
   todos: ITask[];
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
-  colKey: number;
+}
+
+interface StyleColumnProps {
+  isOver: boolean;
 }
 
 const ColumnWrapper = styled.div`
@@ -20,10 +23,12 @@ const ColumnWrapper = styled.div`
   width: 19%;
   flex-direction: column;
 `;
-const TasksColumnWrapper = styled.div`
+
+const TasksColumnWrapper = styled.div<StyleColumnProps>`
   grid-row: 2/17;
   display: flex;
   position: relative;
+  background: ${({ isOver }) => isOver && "#e8ebef"};
   gap: 10px;
   padding: 39px 10px 0px 10px;
   height: 100%;
@@ -32,6 +37,7 @@ const TasksColumnWrapper = styled.div`
   border-right: ${({ title }) =>
     title !== "Complieted" ? "1px solid #f3f3f3" : "none"};
 `;
+
 const ColumnTitle = styled.div`
   display: flex;
   flex-direction: row;
@@ -43,6 +49,7 @@ const ColumnTitle = styled.div`
   grid-row: 1/1;
   position: relative;
 `;
+
 const NumberTasks = styled.div`
   background: #e8ebef;
   color: ${({ theme }) => theme.textSecondary};
@@ -60,7 +67,6 @@ const TaskColumn: FC<ColumnProps> = ({
   moveHandler,
   todos,
   setTodos,
-  colKey,
 }) => {
   const [{ isOver }, drop] = useDrop({
     accept: TaskTypes.CARD,
@@ -70,15 +76,7 @@ const TaskColumn: FC<ColumnProps> = ({
     }),
   });
 
-  const getBackgroundColor = () => {
-    if (isOver) {
-      return "#e8ebef";
-    } else {
-      return "";
-    }
-  };
-
-  const returnTodosForColumn = (columnName: string, colKey: number) => {
+  const returnTodosForColumn = (columnName: string) => {
     return todos
       .filter((todo) => todo.column === columnName)
       .map((todo, index) => (
@@ -100,12 +98,8 @@ const TaskColumn: FC<ColumnProps> = ({
           {todos.filter((todo) => todo.column === taskCol.title).length}
         </NumberTasks>
       </ColumnTitle>
-      <TasksColumnWrapper
-        title={taskCol.title}
-        ref={drop}
-        style={{ backgroundColor: getBackgroundColor() }}
-      >
-        {returnTodosForColumn(taskCol.title, colKey)}
+      <TasksColumnWrapper title={taskCol.title} ref={drop} isOver={isOver}>
+        {returnTodosForColumn(taskCol.title)}
       </TasksColumnWrapper>
     </ColumnWrapper>
   );

@@ -15,12 +15,14 @@ import iconFilesActive from "../../assets/tools-icon/icon_5_active.svg";
 interface ToolSectionProps {
   isActive: boolean;
 }
+
 const ToolsColumnWrapper = styled.div`
   position: relative;
   background: #f5f8fa;
   grid-column: 4/6;
   grid-row: 1/13;
   padding: 24px 16px 24px 0px;
+  min-width: 110px;
   @media (max-width: 1515px) {
     padding-right: 0px;
   }
@@ -29,17 +31,21 @@ const ToolsColumnWrapper = styled.div`
   align-items: flex-start;
   justify-content: start;
 `;
+
 const ToolsTitle = styled.h1`
   margin-left: 16px;
   font-size: 18px;
   line-height: 21px;
 `;
+
 const ToolsList = styled.ul`
   width: 100%;
   margin-top: 26px;
   list-style: none;
 `;
+
 const ToolIcon = styled.img``;
+
 const ToolSection = styled.li<ToolSectionProps>`
   display: flex;
   position: relative;
@@ -72,7 +78,7 @@ const ToolSection = styled.li<ToolSectionProps>`
     `}
 `;
 
-const ToolsColumn = () => {
+export default function ToolsColumn() {
   const [tools, setTools] = useState<ITool[]>([
     {
       id: 0,
@@ -141,6 +147,4 @@ const ToolsColumn = () => {
       </ToolsList>
     </ToolsColumnWrapper>
   );
-};
-
-export default ToolsColumn;
+}

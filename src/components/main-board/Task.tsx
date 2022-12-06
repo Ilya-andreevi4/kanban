@@ -4,12 +4,13 @@ import { ITask } from "../../models/ITaskColumn";
 import { useDrag, useDrop } from "react-dnd";
 import { TaskTypes } from "../../models/TaskTypes";
 import { COLUMN_NAMES } from "./tasks-data";
-import type { Identifier, XYCoord } from "dnd-core";
+import type { XYCoord } from "dnd-core";
 
 interface StyledTaskProps {
   color: string;
   isComplieted: boolean;
   isDragging: boolean;
+  isOver: boolean;
 }
 
 interface DragTodo {
@@ -29,7 +30,8 @@ interface TaskProps {
 const StyledTask = styled.div<StyledTaskProps>`
   display: flex;
   position: relative;
-  padding: 15px;
+  padding: ${({ isOver }) => (isOver ? "13px" : "15px")};
+  min-width: 170px;
   gap: 2px;
   border-radius: 8px;
   flex-direction: column;
@@ -44,6 +46,7 @@ const StyledTask = styled.div<StyledTaskProps>`
   background: ${({ isComplieted, color }) =>
     isComplieted ? "#F0F0F0" : color};
   opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
+  border: ${({ isOver }) => (isOver ? "2px solid #e8ebef" : "none")};
   cursor: pointer;
 `;
 
@@ -75,15 +78,11 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ handlerId }, drop] = useDrop<
-    DragTodo,
-    void,
-    { handlerId: Identifier | null }
-  >({
+  const [{ isOver }, drop] = useDrop<DragTodo, void, { isOver: boolean }>({
     accept: TaskTypes.CARD,
     collect(monitor) {
       return {
-        handlerId: monitor.getHandlerId(),
+        isOver: monitor.isOver(),
       };
     },
     hover(todo: DragTodo, monitor) {
@@ -94,22 +93,21 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
       const hoverIndex = task.id;
       const dragCol = todo.prevColumn;
       const hoverCol = task.column;
+
+      // Change todo's column
       if (dragCol !== hoverCol) {
         changeTodoColumn(dragIndex, hoverCol);
       }
 
-      // Don't replace items with themselves
-      if (dragIndex === hoverIndex) {
-        return;
-      }
+      // Don't replace todo with themselves
+      if (dragIndex === hoverIndex) return;
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 
       // Get vertical middle
-      // console.log(hoverBoundingRect.bottom, hoverBoundingRect.top);
-
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
       // Determine mouse position
       const clientOffset = monitor.getClientOffset();
 
@@ -121,31 +119,39 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
       // When dragging upwards, only move when the cursor is above 50%
 
       // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return;
-      }
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
 
       // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return;
-      }
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
 
       moveHandler(dragIndex, hoverIndex);
       todo.index = hoverIndex;
     },
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging, handlerId, dragTodo }, drag] = useDrag({
     type: TaskTypes.CARD,
     item: () => {
       return { id: task.id, index, prevColumn: task.column };
     },
     collect: (monitor) => ({
+      handlerId: monitor.getHandlerId(),
       isDragging: monitor.isDragging(),
+      dragTodo: monitor.getItem(),
     }),
   });
 
   drag(drop(ref));
+
+  const checkDragging = () => {
+    if (isDragging) return true;
+    if (dragTodo) {
+      if (task.column !== dragTodo.prevColumn && task.id === dragTodo?.id) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   return (
     <StyledTask
@@ -153,10 +159,12 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
       data-handler-id={handlerId}
       key={task.id}
       color={task.color}
-      isDragging={isDragging}
+      isDragging={checkDragging()}
+      isOver={isOver}
       isComplieted={task.column === COLUMN_NAMES.COMPLIETED}
     >
       <TaskDescription
+        isOver={isOver}
         color={task.color}
         isComplieted={task.column === COLUMN_NAMES.COMPLIETED}
         isDragging={isDragging}
@@ -164,6 +172,7 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
         {task.description}
       </TaskDescription>
       <TaskTime
+        isOver={isOver}
         color={task.color}
         isComplieted={task.column === COLUMN_NAMES.COMPLIETED}
         isDragging={isDragging}

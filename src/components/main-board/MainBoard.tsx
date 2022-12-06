@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 import plus from "../../assets/plus.svg";
-import ITaskColumn, { ITask } from "../../models/ITaskColumn";
+import { ITask } from "../../models/ITaskColumn";
 import TaskColumn from "./TaskColumn";
-import taskColumnsData, { tasks } from "./tasks-data";
+import { tasks, taskColumnsData } from "./tasks-data";
 
 const MainBoardWrapper = styled.div`
   position: relative;
@@ -12,6 +12,7 @@ const MainBoardWrapper = styled.div`
   grid-column: 6/25;
   grid-row: 2/13;
   max-height: 955px;
+  min-width: 1040px;
   overflow-y: auto;
   border-bottom: 1px solid #f3f3f3;
   &::before {
@@ -65,9 +66,8 @@ const CreateColumnBody = styled.div`
   position: relative;
 `;
 
-const MainBoard = () => {
-  const [taskColumns, setTaskColumns] =
-    useState<ITaskColumn[]>(taskColumnsData);
+export default function MainBoard() {
+  const taskColumns = taskColumnsData;
 
   const [todos, setTodos] = useState<ITask[]>(tasks);
 
@@ -89,7 +89,6 @@ const MainBoard = () => {
       {taskColumns.map((taskCol) => (
         <TaskColumn
           key={taskCol.id}
-          colKey={taskCol.id}
           taskCol={taskCol}
           moveHandler={moveTodoHandler}
           todos={todos}
@@ -104,6 +103,4 @@ const MainBoard = () => {
       </CreateColumnWrapper>
     </MainBoardWrapper>
   );
-};
-
-export default MainBoard;
+}

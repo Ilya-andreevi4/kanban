@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import Header from "./components/header/Header";
 import MainBoard from "./components/main-board/MainBoard";
@@ -15,7 +14,7 @@ const AppWrapper = styled.div`
   grid-template-rows: repeat(12, 1fr);
 `;
 
-function App() {
+export default function App() {
   return (
     <AppWrapper>
       <SideBar />
@@ -25,5 +24,3 @@ function App() {
     </AppWrapper>
   );
 }
-
-export default App;

@@ -1,22 +1,25 @@
 import arrow from "../../assets/arrow.svg";
-import { useState } from "react";
 import styled from "styled-components";
 
 interface ITaskList {
   title: string;
   tasks: string[];
 }
+
 const TaskListsWrapper = styled.div`
   padding-top: 13px;
   color: white;
 `;
+
 const TasksUl = styled.ul`
   text-align: left;
   list-style: none;
 `;
+
 const TaskSection = styled.li`
   margin-bottom: 22px;
 `;
+
 const TaskTitle = styled.div`
   display: flex;
   align-items: center;
@@ -25,6 +28,7 @@ const TaskTitle = styled.div`
   color: white;
   cursor: pointer;
 `;
+
 const Task = styled.li`
   color: ${({ theme }) => theme.textSecondary};
   font-size: 14px;
@@ -33,8 +37,8 @@ const Task = styled.li`
   cursor: pointer;
 `;
 
-const TaskLists = () => {
-  const [tasks, setTasks] = useState<ITaskList[]>([
+export default function TaskLists() {
+  const tasks: ITaskList[] = [
     { title: "Favorites", tasks: ["Marketing", "Mobile App"] },
     {
       title: "My Projects",
@@ -46,7 +50,8 @@ const TaskLists = () => {
         "House Construction",
       ],
     },
-  ]);
+  ];
+
   return (
     <TaskListsWrapper>
       <TasksUl>
@@ -67,6 +72,4 @@ const TaskLists = () => {
       </TasksUl>
     </TaskListsWrapper>
   );
-};
-
-export default TaskLists;
+}

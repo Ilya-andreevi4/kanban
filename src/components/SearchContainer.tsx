@@ -5,6 +5,7 @@ import searchImg from "../assets/search.svg";
 interface SearchProps {
   place: string;
 }
+
 const SearchWrapper = styled.div<SearchProps>`
   display: flex;
   flex-direction: row;
@@ -17,7 +18,6 @@ const SearchWrapper = styled.div<SearchProps>`
       ? "9px 10px"
       : place === "header" && "12px 14px 12px 16px"};
   width: 100%;
-
   height: ${({ place }) =>
     place === "sidebar" ? "32px" : place === "header" && "100%"};
   background: ${({ place }) =>
@@ -30,6 +30,7 @@ const SearchWrapper = styled.div<SearchProps>`
       max-width: 180px;
     `};
 `;
+
 const Search = styled.input.attrs({ type: "text" })<SearchProps>`
   background: none;
   color: ${({ place }) =>
@@ -42,6 +43,7 @@ const Search = styled.input.attrs({ type: "text" })<SearchProps>`
   border: none;
   margin: 0;
 `;
+
 const SearchIcon = styled.img`
   width: 12px;
   height: 12px;

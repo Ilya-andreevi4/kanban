@@ -1,30 +1,23 @@
 import styled, { css } from "styled-components";
 import { FC, useEffect, useRef, useState } from "react";
 import arrow from "../../assets/header-icons/arrow.svg";
-import { dropdownsData, IDropdawn } from "./dropdowns-data";
+import { dropdownsData } from "./dropdowns-data";
 
 interface DropdownMenuProps {
   type: string;
 }
 
-interface ButtonMenuProps {
-  isAddButton: boolean;
-}
 interface DropTitleProps {
   isActive: boolean;
 }
 
-const ButtonMenu = styled.div<ButtonMenuProps>`
+const ButtonMenuWrapper = styled.div`
   display: flex;
   position: relative;
   align-items: center;
   justify-content: center;
   height: max-content;
   width: max-content;
-  padding: ${({ isAddButton }) => isAddButton && "8px 20px"};
-  border-radius: ${({ isAddButton }) => isAddButton && "50px"};
-  background: ${(props) => (props.isAddButton ? props.theme.accent : "none")};
-  color: ${({ isAddButton }) => isAddButton && "#fff"};
 `;
 const Dropdown = styled.ul`
   display: flex;
@@ -84,75 +77,61 @@ const DropdownTitle = styled.li<DropTitleProps>`
     background: #f5f8fa;
   }
 `;
-// ToDo перенести компонент кнопки в отдельный компонент и сделать нормальное закрытие при прослушивании клика на другие блоки
+
 const DropdownMenu: FC<DropdownMenuProps> = ({ type }) => {
+  //Из базы Dropdowns вытаскиваем подходящий дропдаун
   const initDropData =
     dropdownsData.find((d) => d.title === type) || dropdownsData[0];
-  const [dropdown, setDropdown] = useState<IDropdawn>(initDropData);
-  const [selected, setSelected] = useState("");
+
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState(initDropData.list[2].title);
+  const list = initDropData.list;
   const buttonRef = useRef<HTMLDivElement>(null);
 
   const handleOpenDropdown = () => {
-    setDropdown({ ...dropdown, isOpen: !dropdown.isOpen });
+    setOpen(!open);
   };
 
-  const handleChangeSelect = (
-    selectId: number,
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-    // Выбранную яйчейку помещаем в нужный селектор.
-    dropdown.list.forEach((i) => {
-      if (i.id === selectId) {
-        setSelected(i.title);
-      }
-    });
+  // Выбранную яйчейку помещаем в селектор.
+  const handleSelect = (selectId: number) => {
+    setSelected(list.find((i) => i.id === selectId)?.title || "");
   };
 
+  // Закрываем dropdown при нажатии на другую область
   useEffect(() => {
-    setSelected(dropdown.list.find((t) => t.isActive)?.title || "");
-  }, []);
-
-  // В селекторы вкладываем активную яйчейку
-  useEffect(() => {
-    console.log("render handleClick");
-    if (!dropdown.isOpen) return;
+    if (!open) return;
     const handleClick = (e: any) => {
       if (!buttonRef.current) return;
       if (!buttonRef.current.contains(e.target)) {
-        setDropdown({ ...dropdown, isOpen: false });
+        setOpen(false);
       }
     };
     document.addEventListener("click", handleClick);
     return () => {
       document.removeEventListener("click", handleClick);
     };
-  }, [handleOpenDropdown]);
+  }, [open]);
 
   return (
-    <ButtonMenu
-      isAddButton={false}
-      onClick={() => handleOpenDropdown()}
-      ref={buttonRef}
-    >
-      <SelectTitle isActive={dropdown.isOpen}>
+    <ButtonMenuWrapper onClick={() => handleOpenDropdown()} ref={buttonRef}>
+      <SelectTitle isActive={open}>
         {selected}
-        <ArrowImg src={arrow} alt="" isActive={dropdown.isOpen} />
+        <ArrowImg src={arrow} alt="" isActive={open} />
       </SelectTitle>
-      {dropdown.isOpen && (
+      {open && (
         <Dropdown>
-          {dropdown.list.map((i, index) => (
+          {list.map((i, index) => (
             <DropdownTitle
               key={index}
-              isActive={i.isActive}
-              onClick={(e) => handleChangeSelect(i.id, e)}
+              isActive={i.title === selected}
+              onClick={() => handleSelect(i.id)}
             >
               {i.title}
             </DropdownTitle>
           ))}
         </Dropdown>
       )}
-    </ButtonMenu>
+    </ButtonMenuWrapper>
   );
 };
 

@@ -1,6 +1,6 @@
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 
-const taskColumnsData: ITaskColumn[] = [
+export const taskColumnsData: ITaskColumn[] = [
   {
     id: 0,
     title: "New task",
@@ -18,7 +18,6 @@ const taskColumnsData: ITaskColumn[] = [
     title: "Complieted",
   },
 ];
-export default taskColumnsData;
 
 export const COLUMN_NAMES = {
   NEW_TASK: "New task",

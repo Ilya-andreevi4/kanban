@@ -8,20 +8,19 @@ import DropdownMenu from "./DropdownMenu";
 interface HeaderSectionProps {
   justify: string;
 }
-interface ButtonMenuProps {
-  isAddButton: boolean;
-}
 
 const HeaderWrapper = styled.div`
   position: relative;
   display: flex;
   padding: 20px;
+  min-width: 1040px;
   justify-content: space-between;
   align-content: center;
   box-shadow: 0px 2px 4px #f0f1f2;
   grid-column: 6/25;
   grid-row: 1/1;
 `;
+
 const HeaderSection = styled.div<HeaderSectionProps>`
   height: 100%;
   display: flex;
@@ -30,17 +29,18 @@ const HeaderSection = styled.div<HeaderSectionProps>`
   justify-content: ${({ justify }) =>
     justify === "start" ? "flex-start" : justify === "end" && "flex-end"};
 `;
-const AddButtonMenu = styled.div<ButtonMenuProps>`
+
+const AddButtonMenu = styled.div`
   display: flex;
   position: relative;
   align-items: center;
   justify-content: center;
   height: max-content;
   width: max-content;
-  padding: ${({ isAddButton }) => isAddButton && "8px 20px"};
-  border-radius: ${({ isAddButton }) => isAddButton && "50px"};
-  background: ${(props) => (props.isAddButton ? props.theme.accent : "none")};
-  color: ${({ isAddButton }) => isAddButton && "#fff"};
+  padding: 8px 20px;
+  border-radius: 50px;
+  background: ${(props) => props.theme.accent};
+  color: #fff;
 `;
 
 const NotificationIcon = styled.div`
@@ -51,7 +51,6 @@ const NotificationIcon = styled.div`
   width: 32px;
   height: 32px;
   cursor: pointer;
-
   &::before {
     position: absolute;
     bottom: 50%;
@@ -64,7 +63,6 @@ const NotificationIcon = styled.div`
     box-sizing: border-box;
     background-color: #f21247;
     color: #ffffff;
-
     font-weight: 400;
     font-size: 10px;
     line-height: 10px;
@@ -73,22 +71,22 @@ const NotificationIcon = styled.div`
     content: "99+";
   }
 `;
+
 const UserAvatar = styled.img`
   cursor: pointer;
 `;
 
-const Header = () => {
+export default function Header() {
   return (
     <HeaderWrapper>
       {/* Left side */}
       <HeaderSection justify="start">
-        <AddButtonMenu isAddButton={true}>
+        <AddButtonMenu>
           <img src={plus} alt="+" /> Add New
         </AddButtonMenu>
         <DropdownMenu type="view" />
         <DropdownMenu type="filter" />
       </HeaderSection>
-
       {/* Right side */}
       <HeaderSection justify="end">
         <SearchContainer place="header" />
@@ -99,6 +97,4 @@ const Header = () => {
       </HeaderSection>
     </HeaderWrapper>
   );
-};
-
-export default Header;
+}
