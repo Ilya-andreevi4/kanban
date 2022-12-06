@@ -73,6 +73,7 @@ const NotificationIcon = styled.div`
 `;
 
 const UserAvatar = styled.img`
+  width: 40px;
   cursor: pointer;
 `;
 
