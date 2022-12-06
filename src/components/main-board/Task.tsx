@@ -12,14 +12,10 @@ interface StyledTaskProps {
   isDragging: boolean;
 }
 
-interface DropResult {
-  allowedDropEffect: string;
-  dropEffect: string;
-  title: string;
-}
 interface DragTodo {
   id: number;
   index: number;
+  prevColumn: string;
 }
 
 interface TaskProps {
@@ -47,7 +43,7 @@ const StyledTask = styled.div<StyledTaskProps>`
   user-select: none;
   background: ${({ isComplieted, color }) =>
     isComplieted ? "#F0F0F0" : color};
-  opacity: ${({ isDragging }) => (isDragging ? 0.5 : 1)};
+  opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
   cursor: pointer;
 `;
 
@@ -55,6 +51,7 @@ const TaskDescription = styled.p<StyledTaskProps>`
   color: ${({ isComplieted }) => isComplieted && "#A5A5A5"};
   text-decoration-line: ${({ isComplieted }) => isComplieted && "line-through"};
 `;
+
 const TaskTime = styled.div<StyledTaskProps>`
   display: flex;
   position: relative;
@@ -65,7 +62,6 @@ const TaskTime = styled.div<StyledTaskProps>`
 `;
 
 const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
-  const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
   const changeTodoColumn = (currentTodoId: number, columnName: string) => {
     setTodos((prevState) => {
       return prevState.map((e) => {
@@ -96,6 +92,11 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
       }
       const dragIndex = todo.id;
       const hoverIndex = task.id;
+      const dragCol = todo.prevColumn;
+      const hoverCol = task.column;
+      if (dragCol !== hoverCol) {
+        changeTodoColumn(dragIndex, hoverCol);
+      }
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) {
@@ -137,31 +138,7 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
   const [{ isDragging }, drag] = useDrag({
     type: TaskTypes.CARD,
     item: () => {
-      return { id: task.id, index };
-    },
-    end: (item, monitor) => {
-      const dropResult = monitor.getDropResult() as DropResult;
-      if (dropResult) {
-        const { title } = dropResult;
-
-        switch (title) {
-          case NEW_TASK:
-            changeTodoColumn(item.id, NEW_TASK);
-            break;
-          case SCHEDULED:
-            changeTodoColumn(item.id, SCHEDULED);
-
-            break;
-          case IN_PROGRESS:
-            changeTodoColumn(item.id, IN_PROGRESS);
-            break;
-          case COMPLIETED:
-            changeTodoColumn(item.id, COMPLIETED);
-            break;
-          default:
-            break;
-        }
-      }
+      return { id: task.id, index, prevColumn: task.column };
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
