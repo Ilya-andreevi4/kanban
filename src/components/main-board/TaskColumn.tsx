@@ -71,11 +71,12 @@ const TaskColumn: FC<ColumnProps> = ({
   setTodos,
 }) => {
   const currentTodos = todos.filter((todo) => todo.column === taskCol.title);
-
+  let maxIndex = 0;
   const [{ isOver }, drop] = useDrop({
     accept: TaskTypes.CARD,
     drop: () => ({
       title: taskCol.title,
+      maxIndex: maxIndex,
     }),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -84,6 +85,7 @@ const TaskColumn: FC<ColumnProps> = ({
 
   const returnTodosForColumn = () => {
     return currentTodos.map((todo, index) => {
+      maxIndex++;
       return (
         <Task
           key={todo.id}

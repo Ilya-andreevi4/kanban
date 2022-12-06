@@ -20,6 +20,7 @@ interface DragTodo {
 }
 interface dropItem {
   title: string;
+  maxIndex: number;
 }
 
 interface TaskProps {
@@ -49,7 +50,7 @@ const StyledTask = styled.div<StyledTaskProps>`
   user-select: none;
   background: ${({ isComplieted, color }) =>
     isComplieted ? "#F0F0F0" : color};
-  opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
+  opacity: ${({ isDragging }) => (isDragging ? 0.5 : 1)};
   border: ${({ isOver }) => (isOver ? "2px solid #e8ebef" : "none")};
   cursor: pointer;
 `;
@@ -148,27 +149,27 @@ const Task: FC<TaskProps> = ({
       const dropResult: dropItem | null = monitor.getDropResult() || null;
 
       if (dropResult) {
-        const { title } = dropResult;
+        const { title, maxIndex } = dropResult;
         const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
-        if (!isOver && todo.prevColumn !== title) {
+        if (!isOver) {
           dropHandler(todo.id, title);
-        } else
-          switch (title) {
-            case NEW_TASK:
-              changeTodoColumn(todo.id, NEW_TASK);
-              break;
-            case SCHEDULED:
-              changeTodoColumn(todo.id, SCHEDULED);
-              break;
-            case IN_PROGRESS:
-              changeTodoColumn(todo.id, IN_PROGRESS);
-              break;
-            case COMPLIETED:
-              changeTodoColumn(todo.id, COMPLIETED);
-              break;
-            default:
-              break;
-          }
+        }
+        switch (title) {
+          case NEW_TASK:
+            changeTodoColumn(todo.id, NEW_TASK);
+            break;
+          case SCHEDULED:
+            changeTodoColumn(todo.id, SCHEDULED);
+            break;
+          case IN_PROGRESS:
+            changeTodoColumn(todo.id, IN_PROGRESS);
+            break;
+          case COMPLIETED:
+            changeTodoColumn(todo.id, COMPLIETED);
+            break;
+          default:
+            break;
+        }
       }
     },
     collect: (monitor) => ({
@@ -183,7 +184,7 @@ const Task: FC<TaskProps> = ({
   const checkDragging = () => {
     if (isDragging) return true;
     if (dragTodo) {
-      if (task.column !== dragTodo.prevColumn && task.id === dragTodo?.id) {
+      if (task.id === dragTodo?.id) {
         return true;
       }
     }
