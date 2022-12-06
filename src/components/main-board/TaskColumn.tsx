@@ -8,6 +8,7 @@ import Task from "./Task";
 interface ColumnProps {
   taskCol: ITaskColumn;
   todos: ITask[];
+  dropHandler: (dragIndex: number, currentCol: string) => void;
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
 }
@@ -64,42 +65,47 @@ const NumberTasks = styled.div`
 
 const TaskColumn: FC<ColumnProps> = ({
   taskCol,
+  dropHandler,
   moveHandler,
   todos,
   setTodos,
 }) => {
+  const currentTodos = todos.filter((todo) => todo.column === taskCol.title);
+
   const [{ isOver }, drop] = useDrop({
     accept: TaskTypes.CARD,
-    drop: () => ({ title: taskCol.title }),
+    drop: () => ({
+      title: taskCol.title,
+    }),
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
   });
 
-  const returnTodosForColumn = (columnName: string) => {
-    return todos
-      .filter((todo) => todo.column === columnName)
-      .map((todo, index) => (
+  const returnTodosForColumn = () => {
+    return currentTodos.map((todo, index) => {
+      return (
         <Task
           key={todo.id}
           task={todo}
           moveHandler={moveHandler}
+          dropHandler={dropHandler}
           currentColumnName={todo.column}
           setTodos={setTodos}
           index={index}
         />
-      ));
+      );
+    });
   };
+
   return (
     <ColumnWrapper key={taskCol.id}>
       <ColumnTitle>
         {taskCol.title}
-        <NumberTasks>
-          {todos.filter((todo) => todo.column === taskCol.title).length}
-        </NumberTasks>
+        <NumberTasks>{currentTodos.length}</NumberTasks>
       </ColumnTitle>
       <TasksColumnWrapper title={taskCol.title} ref={drop} isOver={isOver}>
-        {returnTodosForColumn(taskCol.title)}
+        {returnTodosForColumn()}
       </TasksColumnWrapper>
     </ColumnWrapper>
   );

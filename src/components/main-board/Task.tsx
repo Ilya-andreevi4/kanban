@@ -18,11 +18,15 @@ interface DragTodo {
   index: number;
   prevColumn: string;
 }
+interface dropItem {
+  title: string;
+}
 
 interface TaskProps {
   index: number;
   task: ITask;
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
+  dropHandler: (dragIndex: number, currentCol: string) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
   currentColumnName: string;
 }
@@ -64,7 +68,13 @@ const TaskTime = styled.div<StyledTaskProps>`
   line-height: 15px;
 `;
 
-const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
+const Task: FC<TaskProps> = ({
+  task,
+  moveHandler,
+  dropHandler,
+  setTodos,
+  index,
+}) => {
   const changeTodoColumn = (currentTodoId: number, columnName: string) => {
     setTodos((prevState) => {
       return prevState.map((e) => {
@@ -117,7 +127,7 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
-
+      console.log(dragIndex, hoverIndex);
       // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
 
@@ -133,6 +143,33 @@ const Task: FC<TaskProps> = ({ task, moveHandler, setTodos, index }) => {
     type: TaskTypes.CARD,
     item: () => {
       return { id: task.id, index, prevColumn: task.column };
+    },
+    end: (todo, monitor) => {
+      const dropResult: dropItem | null = monitor.getDropResult() || null;
+
+      if (dropResult) {
+        const { title } = dropResult;
+        const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
+        if (!isOver) {
+          dropHandler(todo.id, title);
+        } else
+          switch (title) {
+            case NEW_TASK:
+              changeTodoColumn(todo.id, NEW_TASK);
+              break;
+            case SCHEDULED:
+              changeTodoColumn(todo.id, SCHEDULED);
+              break;
+            case IN_PROGRESS:
+              changeTodoColumn(todo.id, IN_PROGRESS);
+              break;
+            case COMPLIETED:
+              changeTodoColumn(todo.id, COMPLIETED);
+              break;
+            default:
+              break;
+          }
+      }
     },
     collect: (monitor) => ({
       handlerId: monitor.getHandlerId(),

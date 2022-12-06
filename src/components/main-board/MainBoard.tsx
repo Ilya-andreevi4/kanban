@@ -71,9 +71,20 @@ export default function MainBoard() {
 
   const [todos, setTodos] = useState<ITask[]>(tasks);
 
-  const moveTodoHandler = (dragIndex: number, hoverIndex: number) => {
-    const dragTodo = todos.find((t) => t.id === dragIndex);
-    const dragIdx = todos.findIndex((t) => t.id === dragIndex);
+  const dropHandler = (dragId: number, currentCol: string) => {
+    const dragTodo = todos.find((t) => t.id === dragId);
+    const dragIdx = todos.findIndex((t) => t.id === dragId);
+    if (dragTodo) {
+      const copyTodo: ITask = { ...dragTodo, column: currentCol };
+      const coppiedTodosArray = Array.from(todos);
+      coppiedTodosArray.splice(dragIdx, 1);
+      coppiedTodosArray.push(copyTodo);
+      setTodos(coppiedTodosArray);
+    }
+  };
+  const moveTodoHandler = (dragId: number, hoverIndex: number) => {
+    const dragTodo = todos.find((t) => t.id === dragId);
+    const dragIdx = todos.findIndex((t) => t.id === dragId);
     const hoverIdx = todos.findIndex((t) => t.id === hoverIndex);
 
     if (dragTodo) {
@@ -90,6 +101,7 @@ export default function MainBoard() {
         <TaskColumn
           key={taskCol.id}
           taskCol={taskCol}
+          dropHandler={dropHandler}
           moveHandler={moveTodoHandler}
           todos={todos}
           setTodos={setTodos}
