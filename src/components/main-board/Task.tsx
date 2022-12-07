@@ -89,6 +89,7 @@ const Task: FC<TaskProps> = ({
     collect(monitor) {
       return {
         isOver: monitor.isOver(),
+        hoverItem: monitor.getItem(),
       };
     },
     hover(todo: DragTodo, monitor) {
@@ -100,6 +101,18 @@ const Task: FC<TaskProps> = ({
 
       // Don't replace todo with themselves
       if (dragId === hoverId) return;
+
+      // ADDED IN DEV
+      if (todo.prevColumn !== task.column) {
+        console.log(
+          "change column in hover task! ",
+          todo.prevColumn,
+          task.column
+        );
+
+        changeTodoColumn(todo.id, task.column);
+      }
+      // ADDED IN DEV
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 

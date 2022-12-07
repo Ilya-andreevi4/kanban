@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ITaskColumn, { ITask } from "../../models/ITaskColumn";
 import { TaskTypes } from "../../models/TaskTypes";
 import Task from "./Task";
+import { COLUMN_NAMES } from "./tasks-data";
 
 interface ColumnProps {
   taskCol: ITaskColumn;
@@ -15,10 +16,6 @@ interface ColumnProps {
     hoverIndex: number
   ) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
-}
-
-interface StyleColumnProps {
-  isOver: boolean;
 }
 
 interface DragTodo {
@@ -35,18 +32,18 @@ const ColumnWrapper = styled.div`
   flex-direction: column;
 `;
 
-const TasksColumnWrapper = styled.div<StyleColumnProps>`
+const TasksColumnWrapper = styled.div`
   grid-row: 2/17;
   display: flex;
   position: relative;
-  background: ${({ isOver }) => isOver && "#e8ebef"};
   gap: 10px;
-  padding: 39px 10px 0px 10px;
+  padding: ${({ title }) =>
+    title === NEW_TASK ? "39px 10px 0px 20px" : "39px 10px 0px 10px"};
   height: 100%;
   overflow-y: auto;
   flex-direction: column;
   border-right: ${({ title }) =>
-    title !== "Complieted" ? "1px solid #f3f3f3" : "none"};
+    title !== COMPLIETED ? "1px solid #f3f3f3" : "none"};
 `;
 
 const ColumnTitle = styled.div`
@@ -59,6 +56,7 @@ const ColumnTitle = styled.div`
   gap: 10px;
   grid-row: 1/1;
   position: relative;
+  border-bottom: 1px solid #f3f3f3;
 `;
 
 const NumberTasks = styled.div`
@@ -72,6 +70,7 @@ const NumberTasks = styled.div`
   height: max-content;
   width: max-content;
 `;
+const { NEW_TASK, COMPLIETED } = COLUMN_NAMES;
 
 const TaskColumn: FC<ColumnProps> = ({
   taskCol,
@@ -80,6 +79,8 @@ const TaskColumn: FC<ColumnProps> = ({
   todos,
   setTodos,
 }) => {
+  const currentTodos = todos.filter((todo) => todo.column === taskCol.title);
+
   const changeTodoColumn = (currentTodoId: number, columnName: string) => {
     setTodos((prev) => {
       return prev.map((e) => {
@@ -91,15 +92,17 @@ const TaskColumn: FC<ColumnProps> = ({
     });
   };
 
-  const currentTodos = todos.filter((todo) => todo.column === taskCol.title);
-
-  const [{ isOver }, drop] = useDrop({
+  const [, drop] = useDrop({
     accept: TaskTypes.CARD,
+
     drop: () => ({
       title: taskCol.title,
     }),
+
     hover(todo: DragTodo) {
+      // Если захваченная задача из другой колонки, то меняем у задачи колонку на текущую
       if (todo.prevColumn === taskCol.title) return;
+      todo.prevColumn = taskCol.title;
       const dragIndex = todo.id;
       const dragTodo = todos.find((t) => t.id === dragIndex);
       if (!dragTodo) return;
@@ -111,11 +114,7 @@ const TaskColumn: FC<ColumnProps> = ({
       coppiedTodosArr.splice(dragIdx, 1);
       coppiedTodosArr.push(copyTodo);
       setTodos(coppiedTodosArr);
-      todo.prevColumn = taskCol.title;
     },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
   });
 
   const returnTodosForColumn = () => {
@@ -141,7 +140,7 @@ const TaskColumn: FC<ColumnProps> = ({
         {taskCol.title}
         <NumberTasks>{currentTodos.length}</NumberTasks>
       </ColumnTitle>
-      <TasksColumnWrapper title={taskCol.title} ref={drop} isOver={isOver}>
+      <TasksColumnWrapper title={taskCol.title} ref={drop}>
         {returnTodosForColumn()}
       </TasksColumnWrapper>
     </ColumnWrapper>
