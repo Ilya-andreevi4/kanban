@@ -33,7 +33,6 @@ interface TaskProps {
     currentCol: string,
     hoverIndex: number
   ) => void;
-  // setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
   todos: ITask[];
   currentColumnName: string;
 }
@@ -98,13 +97,6 @@ const Task: FC<TaskProps> = ({
       }
       const dragId = todo.id;
       const hoverId = task.id;
-      const hoverCol = task.column;
-
-      // Change todo's column
-      if (todo.prevColumn !== hoverCol) {
-        changeTodoColumn(dragId, hoverCol);
-        todo.prevColumn = hoverCol;
-      }
 
       // Don't replace todo with themselves
       if (dragId === hoverId) return;
