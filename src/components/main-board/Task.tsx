@@ -89,7 +89,6 @@ const Task: FC<TaskProps> = ({
     collect(monitor) {
       return {
         isOver: monitor.isOver(),
-        hoverItem: monitor.getItem(),
       };
     },
     hover(todo: DragTodo, monitor) {
@@ -102,17 +101,9 @@ const Task: FC<TaskProps> = ({
       // Don't replace todo with themselves
       if (dragId === hoverId) return;
 
-      // ADDED IN DEV
       if (todo.prevColumn !== task.column) {
-        console.log(
-          "change column in hover task! ",
-          todo.prevColumn,
-          task.column
-        );
-
         changeTodoColumn(todo.id, task.column);
       }
-      // ADDED IN DEV
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 
@@ -140,7 +131,7 @@ const Task: FC<TaskProps> = ({
     },
   });
 
-  const [{ isDragging, handlerId, dragTodo }, drag] = useDrag({
+  const [{ isDragging, dragTodo }, drag] = useDrag({
     type: TaskTypes.CARD,
     item: () => {
       return {
@@ -179,7 +170,6 @@ const Task: FC<TaskProps> = ({
       }
     },
     collect: (monitor) => ({
-      handlerId: monitor.getHandlerId(),
       isDragging: monitor.isDragging(),
       dragTodo: monitor.getItem(),
     }),
@@ -199,7 +189,6 @@ const Task: FC<TaskProps> = ({
   return (
     <StyledTask
       ref={ref}
-      data-handler-id={handlerId}
       key={task.id}
       color={task.color}
       isDragging={checkDragging()}
