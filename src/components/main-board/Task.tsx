@@ -20,14 +20,17 @@ interface DragTodo {
 }
 interface dropItem {
   title: string;
-  maxIndex: number;
 }
 
 interface TaskProps {
   index: number;
   task: ITask;
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
-  dropHandler: (dragIndex: number, currentCol: string) => void;
+  dropHandler: (
+    dragIndex: number,
+    currentCol: string,
+    hoverIndex: number
+  ) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
   currentColumnName: string;
 }
@@ -101,7 +104,7 @@ const Task: FC<TaskProps> = ({
         return;
       }
       const dragIndex = todo.id;
-      const hoverIndex = task.id;
+      const hoverId = task.id;
       const dragCol = todo.prevColumn;
       const hoverCol = task.column;
 
@@ -111,7 +114,7 @@ const Task: FC<TaskProps> = ({
       }
 
       // Don't replace todo with themselves
-      if (dragIndex === hoverIndex) return;
+      if (dragIndex === hoverId) return;
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 
@@ -128,15 +131,15 @@ const Task: FC<TaskProps> = ({
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
-      console.log(dragIndex, hoverIndex);
+      console.log(dragIndex, hoverId);
       // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+      if (dragIndex < hoverId && hoverClientY < hoverMiddleY) return;
 
       // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+      if (dragIndex > hoverId && hoverClientY > hoverMiddleY) return;
 
-      moveHandler(dragIndex, hoverIndex);
-      todo.index = hoverIndex;
+      moveHandler(dragIndex, hoverId);
+      todo.index = hoverId;
     },
   });
 
@@ -149,10 +152,10 @@ const Task: FC<TaskProps> = ({
       const dropResult: dropItem | null = monitor.getDropResult() || null;
 
       if (dropResult) {
-        const { title, maxIndex } = dropResult;
+        const { title } = dropResult;
         const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
         if (!isOver) {
-          dropHandler(todo.id, title);
+          dropHandler(todo.id, title, task.id);
         }
         switch (title) {
           case NEW_TASK:

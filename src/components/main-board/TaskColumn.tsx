@@ -8,7 +8,11 @@ import Task from "./Task";
 interface ColumnProps {
   taskCol: ITaskColumn;
   todos: ITask[];
-  dropHandler: (dragIndex: number, currentCol: string) => void;
+  dropHandler: (
+    dragIndex: number,
+    currentCol: string,
+    hoverIndex: number
+  ) => void;
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
 }
