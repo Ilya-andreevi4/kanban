@@ -32,6 +32,7 @@ interface TaskProps {
     hoverIndex: number
   ) => void;
   setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
+  todos: ITask[];
   currentColumnName: string;
 }
 
@@ -53,7 +54,7 @@ const StyledTask = styled.div<StyledTaskProps>`
   user-select: none;
   background: ${({ isComplieted, color }) =>
     isComplieted ? "#F0F0F0" : color};
-  opacity: ${({ isDragging }) => (isDragging ? 0.5 : 1)};
+  opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
   border: ${({ isOver }) => (isOver ? "2px solid #e8ebef" : "none")};
   cursor: pointer;
 `;
@@ -76,12 +77,13 @@ const Task: FC<TaskProps> = ({
   task,
   moveHandler,
   dropHandler,
+  todos,
   setTodos,
   index,
 }) => {
   const changeTodoColumn = (currentTodoId: number, columnName: string) => {
-    setTodos((prevState) => {
-      return prevState.map((e) => {
+    setTodos((prev) => {
+      return prev.map((e) => {
         return {
           ...e,
           column: e.id === currentTodoId ? columnName : e.column,
@@ -105,13 +107,10 @@ const Task: FC<TaskProps> = ({
       }
       const dragIndex = todo.id;
       const hoverId = task.id;
-      const dragCol = todo.prevColumn;
       const hoverCol = task.column;
 
       // Change todo's column
-      if (dragCol !== hoverCol) {
-        changeTodoColumn(dragIndex, hoverCol);
-      }
+      changeTodoColumn(dragIndex, hoverCol);
 
       // Don't replace todo with themselves
       if (dragIndex === hoverId) return;
@@ -131,7 +130,6 @@ const Task: FC<TaskProps> = ({
       // Only perform the move when the mouse has crossed half of the items height
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
-      console.log(dragIndex, hoverId);
       // Dragging downwards
       if (dragIndex < hoverId && hoverClientY < hoverMiddleY) return;
 
@@ -139,7 +137,7 @@ const Task: FC<TaskProps> = ({
       if (dragIndex > hoverId && hoverClientY > hoverMiddleY) return;
 
       moveHandler(dragIndex, hoverId);
-      todo.index = hoverId;
+      todo.index = hoverId + 1;
     },
   });
 
@@ -151,28 +149,30 @@ const Task: FC<TaskProps> = ({
     end: (todo, monitor) => {
       const dropResult: dropItem | null = monitor.getDropResult() || null;
 
-      if (dropResult) {
-        const { title } = dropResult;
-        const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
-        if (!isOver) {
-          dropHandler(todo.id, title, task.id);
-        }
-        switch (title) {
-          case NEW_TASK:
-            changeTodoColumn(todo.id, NEW_TASK);
-            break;
-          case SCHEDULED:
-            changeTodoColumn(todo.id, SCHEDULED);
-            break;
-          case IN_PROGRESS:
-            changeTodoColumn(todo.id, IN_PROGRESS);
-            break;
-          case COMPLIETED:
-            changeTodoColumn(todo.id, COMPLIETED);
-            break;
-          default:
-            break;
-        }
+      if (!dropResult) return;
+      const { title } = dropResult;
+      const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
+      const columnArr = Array.from(todos.filter((t) => t.column === title));
+      const currentTodoIndex = columnArr.findIndex((t) => t.id === todo.id);
+      const todoIndex = columnArr.length - 1;
+      if (currentTodoIndex >= todoIndex) {
+        dropHandler(todo.id, title, task.id);
+      }
+      switch (title) {
+        case NEW_TASK:
+          changeTodoColumn(todo.id, NEW_TASK);
+          break;
+        case SCHEDULED:
+          changeTodoColumn(todo.id, SCHEDULED);
+          break;
+        case IN_PROGRESS:
+          changeTodoColumn(todo.id, IN_PROGRESS);
+          break;
+        case COMPLIETED:
+          changeTodoColumn(todo.id, COMPLIETED);
+          break;
+        default:
+          break;
       }
     },
     collect: (monitor) => ({
@@ -187,7 +187,7 @@ const Task: FC<TaskProps> = ({
   const checkDragging = () => {
     if (isDragging) return true;
     if (dragTodo) {
-      if (task.id === dragTodo?.id) {
+      if (task.id === dragTodo.id && index !== dragTodo.index) {
         return true;
       }
     }

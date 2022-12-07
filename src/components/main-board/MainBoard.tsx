@@ -73,49 +73,37 @@ export default function MainBoard() {
 
   const dropHandler = (dragId: number, currentCol: string, hoverId: number) => {
     const dragTodo = todos.find((t) => t.id === dragId);
-    if (dragTodo) {
-      const hoverIdx = todos.findIndex((t) => t.id === hoverId);
-      // Меняем у перетаскиваемой туду колонку
-      const coppiedTodosArr = Array.from(
-        todos.map((t) => {
-          return {
-            ...t,
-            column: t.id === dragId ? currentCol : t.column,
-          };
-        })
-      );
+    if (!dragTodo) return;
+    // Копируем туду с изменённой колонкой
+    const copyTodo: ITask = { ...dragTodo, column: currentCol };
+    const coppiedTodosArr = Array.from(todos);
 
-      // Копируем массив туду из колонки для выявления последнего индекса в колонке
-      const columnArr = Array.from(
-        coppiedTodosArr.filter((t) => t.column === currentCol)
-      );
-      const lastIndex = columnArr.length - 1;
+    // Вырезаем переносимую туду и запушиваем обратно, чтобы она получила последний индекс и встала в низ колонки
+    const hoverIdx = todos.findIndex((t) => t.id === hoverId);
+    coppiedTodosArr.splice(hoverIdx, 1);
+    coppiedTodosArr.push(copyTodo);
 
-      // Если туду перетаскиваем в пустую область, то её индекс будет равен последнему индексу
-      if (hoverIdx >= lastIndex) {
-        // Вырезаем переносимую туду и запушиваем обратно, чтобы она получила последний индекс и встала в низ колонки
-        coppiedTodosArr.splice(hoverIdx, 1);
-        coppiedTodosArr.push(dragTodo);
-      } else {
-        // Если туду находится между другими туду, то вставляем её между ними
-        const dragIdx = columnArr.findIndex((t) => t.id === dragId);
-        const [NewOrder] = coppiedTodosArr.splice(dragIdx, 1);
-        coppiedTodosArr.splice(hoverIdx, 0, NewOrder);
-      }
-      setTodos(coppiedTodosArr);
-    }
+    // Копируем массив туду из текущей колонки для выявления последнего индекса в колонке и индекса перетаскиваемой задачи
+    const columnArr = Array.from(
+      coppiedTodosArr.filter((t) => t.column === currentCol)
+    );
+    const hoverColIdx = columnArr.findIndex((t) => t.id === hoverId);
+    const lastIndex = columnArr.length - 1;
+
+    // Если туду перетаскиваем в пустую область, то её индекс будет равен последнему индексу
+    if (hoverColIdx < lastIndex) return;
+    setTodos(coppiedTodosArr);
   };
 
   const moveTodoHandler = (dragId: number, hoverId: number) => {
     const dragTodo = todos.find((t) => t.id === dragId);
     const dragIdx = todos.findIndex((t) => t.id === dragId);
     const hoverIdx = todos.findIndex((t) => t.id === hoverId);
-    if (dragTodo) {
-      const coppiedTodosArr = Array.from(todos);
-      const [NewOrder] = coppiedTodosArr.splice(dragIdx, 1);
-      coppiedTodosArr.splice(hoverIdx, 0, NewOrder);
-      setTodos(coppiedTodosArr);
-    }
+    if (!dragTodo) return;
+    const coppiedTodosArr = Array.from(todos);
+    const [NewOrder] = coppiedTodosArr.splice(dragIdx, 1);
+    coppiedTodosArr.splice(hoverIdx, 0, NewOrder);
+    setTodos(coppiedTodosArr);
   };
 
   return (
@@ -124,8 +112,8 @@ export default function MainBoard() {
         <TaskColumn
           key={taskCol.id}
           taskCol={taskCol}
-          dropHandler={dropHandler}
           moveHandler={moveTodoHandler}
+          dropHandler={dropHandler}
           todos={todos}
           setTodos={setTodos}
         />
