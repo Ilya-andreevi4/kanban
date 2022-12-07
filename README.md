@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Kanban app for Bordio. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with Create React App
 
 ## Available Scripts
 
