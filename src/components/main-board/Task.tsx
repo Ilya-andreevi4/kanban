@@ -18,7 +18,8 @@ interface DragTodo {
   index: number;
   prevColumn: string;
 }
-interface dropItem {
+
+interface dropColumn {
   title: string;
 }
 
@@ -26,12 +27,13 @@ interface TaskProps {
   index: number;
   task: ITask;
   moveHandler: (dragIndex: number, hoverIndex: number) => void;
+  changeTodoColumn: (currentTodoId: number, columnName: string) => void;
   dropHandler: (
     dragIndex: number,
     currentCol: string,
     hoverIndex: number
   ) => void;
-  setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
+  // setTodos: React.Dispatch<React.SetStateAction<ITask[]>>;
   todos: ITask[];
   currentColumnName: string;
 }
@@ -54,7 +56,7 @@ const StyledTask = styled.div<StyledTaskProps>`
   user-select: none;
   background: ${({ isComplieted, color }) =>
     isComplieted ? "#F0F0F0" : color};
-  opacity: ${({ isDragging }) => (isDragging ? 0 : 1)};
+  opacity: ${({ isDragging }) => (isDragging ? 0.01 : 1)};
   border: ${({ isOver }) => (isOver ? "2px solid #e8ebef" : "none")};
   cursor: pointer;
 `;
@@ -77,21 +79,10 @@ const Task: FC<TaskProps> = ({
   task,
   moveHandler,
   dropHandler,
+  changeTodoColumn,
   todos,
-  setTodos,
   index,
 }) => {
-  const changeTodoColumn = (currentTodoId: number, columnName: string) => {
-    setTodos((prev) => {
-      return prev.map((e) => {
-        return {
-          ...e,
-          column: e.id === currentTodoId ? columnName : e.column,
-        };
-      });
-    });
-  };
-
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ isOver }, drop] = useDrop<DragTodo, void, { isOver: boolean }>({
@@ -105,15 +96,18 @@ const Task: FC<TaskProps> = ({
       if (!ref.current) {
         return;
       }
-      const dragIndex = todo.id;
+      const dragId = todo.id;
       const hoverId = task.id;
       const hoverCol = task.column;
 
       // Change todo's column
-      changeTodoColumn(dragIndex, hoverCol);
+      if (todo.prevColumn !== hoverCol) {
+        changeTodoColumn(dragId, hoverCol);
+        todo.prevColumn = hoverCol;
+      }
 
       // Don't replace todo with themselves
-      if (dragIndex === hoverId) return;
+      if (dragId === hoverId) return;
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
 
@@ -131,12 +125,12 @@ const Task: FC<TaskProps> = ({
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
       // Dragging downwards
-      if (dragIndex < hoverId && hoverClientY < hoverMiddleY) return;
+      if (dragId < hoverId && hoverClientY < hoverMiddleY) return;
 
       // Dragging upwards
-      if (dragIndex > hoverId && hoverClientY > hoverMiddleY) return;
+      if (dragId > hoverId && hoverClientY > hoverMiddleY) return;
 
-      moveHandler(dragIndex, hoverId);
+      moveHandler(dragId, hoverId);
       todo.index = hoverId + 1;
     },
   });
@@ -144,10 +138,14 @@ const Task: FC<TaskProps> = ({
   const [{ isDragging, handlerId, dragTodo }, drag] = useDrag({
     type: TaskTypes.CARD,
     item: () => {
-      return { id: task.id, index, prevColumn: task.column };
+      return {
+        id: task.id,
+        index,
+        prevColumn: task.column,
+      };
     },
     end: (todo, monitor) => {
-      const dropResult: dropItem | null = monitor.getDropResult() || null;
+      const dropResult: dropColumn | null = monitor.getDropResult() || null;
 
       if (!dropResult) return;
       const { title } = dropResult;
@@ -186,10 +184,9 @@ const Task: FC<TaskProps> = ({
 
   const checkDragging = () => {
     if (isDragging) return true;
-    if (dragTodo) {
-      if (task.id === dragTodo.id && index !== dragTodo.index) {
-        return true;
-      }
+    if (!dragTodo) return false;
+    if (task.id === dragTodo.id) {
+      return true;
     }
     return false;
   };

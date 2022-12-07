@@ -21,6 +21,12 @@ interface StyleColumnProps {
   isOver: boolean;
 }
 
+interface DragTodo {
+  id: number;
+  index: number;
+  prevColumn: string;
+}
+
 const ColumnWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -74,12 +80,39 @@ const TaskColumn: FC<ColumnProps> = ({
   todos,
   setTodos,
 }) => {
+  const changeTodoColumn = (currentTodoId: number, columnName: string) => {
+    setTodos((prev) => {
+      return prev.map((e) => {
+        return {
+          ...e,
+          column: e.id === currentTodoId ? columnName : e.column,
+        };
+      });
+    });
+  };
+
   const currentTodos = todos.filter((todo) => todo.column === taskCol.title);
+
   const [{ isOver }, drop] = useDrop({
     accept: TaskTypes.CARD,
     drop: () => ({
       title: taskCol.title,
     }),
+    hover(todo: DragTodo) {
+      if (todo.prevColumn === taskCol.title) return;
+      const dragIndex = todo.id;
+      const dragTodo = todos.find((t) => t.id === dragIndex);
+      if (!dragTodo) return;
+
+      // Change todo's column
+      const copyTodo: ITask = { ...dragTodo, column: taskCol.title };
+      const coppiedTodosArr = Array.from(todos);
+      const dragIdx = todos.findIndex((t) => t.id === dragIndex);
+      coppiedTodosArr.splice(dragIdx, 1);
+      coppiedTodosArr.push(copyTodo);
+      setTodos(coppiedTodosArr);
+      todo.prevColumn = taskCol.title;
+    },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
@@ -94,8 +127,8 @@ const TaskColumn: FC<ColumnProps> = ({
           todos={todos}
           moveHandler={moveHandler}
           dropHandler={dropHandler}
+          changeTodoColumn={changeTodoColumn}
           currentColumnName={todo.column}
-          setTodos={setTodos}
           index={index}
         />
       );
