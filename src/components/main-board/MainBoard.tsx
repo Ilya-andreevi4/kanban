@@ -8,31 +8,12 @@ import { tasks, taskColumnsData } from "./tasks-data";
 const MainBoardWrapper = styled.div`
   position: relative;
   display: flex;
-  padding: 0px 10px;
   grid-column: 6/25;
   grid-row: 2/13;
   max-height: 955px;
   min-width: 1040px;
   overflow-y: auto;
   border-bottom: 1px solid #f3f3f3;
-  &::before {
-    position: absolute;
-    content: "";
-    top: 56px;
-    left: 0;
-    height: 1px;
-    width: 100%;
-    background: #f3f3f3;
-  }
-  &::after {
-    position: absolute;
-    content: "";
-    top: 0;
-    right: 24%;
-    height: 100%;
-    width: 1px;
-    background: #f3f3f3;
-  }
 `;
 
 const CreateColumnWrapper = styled.div`
@@ -55,8 +36,8 @@ const CreateColumnTitle = styled.div`
   text-align: left;
   align-items: flex-start;
   width: 100%;
-  border-top: none;
-  border-right: none;
+  border-left: 1px solid #f3f3f3;
+  border-bottom: 1px solid #f3f3f3;
 `;
 
 const CreateColumnBody = styled.div`
@@ -64,6 +45,7 @@ const CreateColumnBody = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  border-left: 1px solid #f3f3f3;
 `;
 
 export default function MainBoard() {
