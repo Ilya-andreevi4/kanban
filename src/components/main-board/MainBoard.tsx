@@ -97,6 +97,7 @@ export default function MainBoard() {
         coppiedTodosArr.splice(hoverIdx, 1);
         coppiedTodosArr.push(dragTodo);
       } else {
+        // Если туду находится между другими туду, то вставляем её между ними
         const dragIdx = columnArr.findIndex((t) => t.id === dragId);
         const [NewOrder] = coppiedTodosArr.splice(dragIdx, 1);
         coppiedTodosArr.splice(hoverIdx, 0, NewOrder);
@@ -109,7 +110,6 @@ export default function MainBoard() {
     const dragTodo = todos.find((t) => t.id === dragId);
     const dragIdx = todos.findIndex((t) => t.id === dragId);
     const hoverIdx = todos.findIndex((t) => t.id === hoverId);
-
     if (dragTodo) {
       const coppiedTodosArr = Array.from(todos);
       const [NewOrder] = coppiedTodosArr.splice(dragIdx, 1);
