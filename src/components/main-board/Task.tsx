@@ -86,20 +86,21 @@ const Task: FC<TaskProps> = ({
 
   const [{ isOver }, drop] = useDrop<DragTodo, void, { isOver: boolean }>({
     accept: TaskTypes.CARD,
+
     collect(monitor) {
       return {
         isOver: monitor.isOver(),
       };
     },
+
     hover(todo: DragTodo, monitor) {
       if (!ref.current) {
         return;
       }
-      const dragId = todo.id;
-      const hoverId = task.id;
-
+      const dragIdx = todo.index;
+      const hoverIdx = index;
       // Don't replace todo with themselves
-      if (dragId === hoverId) return;
+      if (todo.id === task.id) return;
 
       if (todo.prevColumn !== task.column) {
         changeTodoColumn(todo.id, task.column);
@@ -121,18 +122,19 @@ const Task: FC<TaskProps> = ({
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
       // Dragging downwards
-      if (dragId < hoverId && hoverClientY < hoverMiddleY) return;
+      if (dragIdx < hoverIdx && hoverClientY < hoverMiddleY) return;
 
       // Dragging upwards
-      if (dragId > hoverId && hoverClientY > hoverMiddleY) return;
+      if (dragIdx > hoverIdx && hoverClientY > hoverMiddleY) return;
 
-      moveHandler(dragId, hoverId);
-      todo.index = hoverId + 1;
+      moveHandler(todo.id, task.id);
+      todo.index = hoverIdx;
     },
   });
 
   const [{ isDragging, dragTodo }, drag] = useDrag({
     type: TaskTypes.CARD,
+
     item: () => {
       return {
         id: task.id,
@@ -140,15 +142,18 @@ const Task: FC<TaskProps> = ({
         prevColumn: task.column,
       };
     },
+
     end: (todo, monitor) => {
       const dropResult: dropColumn | null = monitor.getDropResult() || null;
 
       if (!dropResult) return;
       const { title } = dropResult;
       const { NEW_TASK, SCHEDULED, IN_PROGRESS, COMPLIETED } = COLUMN_NAMES;
+      // Проверяем индекс брошенной задачи
       const columnArr = Array.from(todos.filter((t) => t.column === title));
       const currentTodoIndex = columnArr.findIndex((t) => t.id === todo.id);
       const todoIndex = columnArr.length - 1;
+      // Если индекс равен последнему индексу, то используем функцию dropHandler
       if (currentTodoIndex >= todoIndex) {
         dropHandler(todo.id, title, task.id);
       }
@@ -169,6 +174,7 @@ const Task: FC<TaskProps> = ({
           break;
       }
     },
+
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
       dragTodo: monitor.getItem(),

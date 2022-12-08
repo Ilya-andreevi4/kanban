@@ -65,15 +65,6 @@ export default function MainBoard() {
     coppiedTodosArr.splice(hoverIdx, 1);
     coppiedTodosArr.push(copyTodo);
 
-    // Копируем массив туду из текущей колонки для выявления последнего индекса в колонке и индекса перетаскиваемой задачи
-    const columnArr = Array.from(
-      coppiedTodosArr.filter((t) => t.column === currentCol)
-    );
-    const hoverColIdx = columnArr.findIndex((t) => t.id === hoverId);
-    const lastIndex = columnArr.length - 1;
-
-    // Если туду перетаскиваем в пустую область, то её индекс будет равен последнему индексу
-    if (hoverColIdx < lastIndex) return;
     setTodos(coppiedTodosArr);
   };
 
