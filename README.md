@@ -2,6 +2,9 @@
 
 This project was bootstrapped with Create React App
 
+# Preview site:
+https://kanban-by-ilya-orekhov.netlify.app/
+
 ## Available Scripts
 
 In the project directory, you can run:
